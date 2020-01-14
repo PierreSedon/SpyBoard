@@ -1,0 +1,1 @@
+$WindowSize = $Host.UI.RawUI.WindowSize;$WindowSize.Width  = 100;$WindowSize.Height = 100;$Host.UI.RawUI.WindowSize = $WindowSize
