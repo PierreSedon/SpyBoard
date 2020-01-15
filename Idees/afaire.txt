@@ -9,3 +9,5 @@ Pbs: permission denied pour l'upload
 Sur Windows: 
 500 Illegal PORT command.
 425 Use PORT or PASV first.
+
+chmod +w pour www-data sur . et assets (pour la créaion de fichiers)
