@@ -20,7 +20,7 @@ if (isset($_POST['action'])) {
                 
                 clearstatcache();
                 $mtime = filemtime($outputfile);
-                exec('echo "' . $_POST['command']. '" > command');
+                exec('echo "' . $_POST['command']. '" > ../command');
                 
                 $sleepcount = 0;
                 clearstatcache();
@@ -37,11 +37,11 @@ if (isset($_POST['action'])) {
                     $oldoutput = file_get_contents($newfile);
                     $result = str_replace($oldoutput, "", $fulloutput);
                     echo $result;
-                    // $my_file = '/tmp/savedfile.odt';
-                    // $handle = fopen($my_file, 'w+') or die('Cannot open file:  '.$my_file);
-                    // fwrite($handle, $result);
-                    // fclose($handle);
-                    // echo "saving file";
+                    $my_file = '../tmp/savedfile.odt';
+                    $handle = fopen($my_file, 'w') or die('Cannot open file:  '.$my_file);
+                    fwrite($handle, $result);
+                    fclose($handle);
+                    echo "saving file";
                 } else {
                     echo "Shell took too long to respond";
                 }

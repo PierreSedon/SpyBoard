@@ -1,9 +1,9 @@
 #!/bin/bash
 while true; do
-    if [ -s assets/command ]
+    if [ -s ./command ]
     then
-        cat assets/command | tee > /tmp/reverseinput
-        rm -f assets/command
+        cat ./command | tee > /tmp/reverseinput
+        rm -f ./command
         # echo oui
     else
         sleep 0.1
