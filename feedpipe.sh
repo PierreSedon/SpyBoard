@@ -1,10 +1,9 @@
 #!/bin/bash
 while true; do
-    if [ -s ./command ]
+    if [ -s cmd/command ]
     then
-        cat ./command | tee > /tmp/reverseinput
-        rm -f ./command
-        # echo oui
+        cat cmd/command | tee > /tmp/reverseinput
+        rm -f cmd/command
     else
         sleep 0.1
     fi

@@ -22,7 +22,7 @@
 //     readTextFile("http://localhost/bootstrap/reverseoutput");
 // }, 1000);
 
-function sendAjaxCall(action, command=null) {
+function sendAjaxCall(action, command=null, printOutput=true) {
     var ajaxurl = 'assets/ajax.php';
     var data =  {
         'action': action,
@@ -45,10 +45,14 @@ function sendAjaxCall(action, command=null) {
     // Code to run if the request succeeds (is done);
     // The response is passed to the function
     .done(function( response ) {
-        $( "#terminaltext")[0].innerHTML += command;
-        $( "#terminaltext")[0].innerHTML += "\n";
-        $( "#terminaltext")[0].innerHTML += response;
-        $('#terminaltext').scrollTop($('#terminaltext')[0].scrollHeight);
+        if (printOutput){
+            if (action.localeCompare("init") != 0){
+                $( "#terminaltext")[0].innerHTML += command;
+                $( "#terminaltext")[0].innerHTML += "\n";
+            }
+            $( "#terminaltext")[0].innerHTML += response;
+            $('#terminaltext').scrollTop($('#terminaltext')[0].scrollHeight);
+        }
         console.log(response);
     })
     // Code to run if the request fails; the raw request and
@@ -66,6 +70,7 @@ function sendAjaxCall(action, command=null) {
 }
 
 $( document ).ready(function() {
+    sendAjaxCall("init", null, true);
     // sendAjaxCall("write", "Get-ChildItem -Force");
     // document.addEventListener('outputRead', function(event){
     //     $( "#terminaltext" )[0].textContent = event.detail;
@@ -79,9 +84,8 @@ $( document ).ready(function() {
         event.currentTarget.classList.add("active");
     });
     
-    $( ".btn-primary" ).click(function( event ) {
-        sendAjaxCall("write", $(" #terminalinput ")[0].value);
-        $(" #terminalinput ")[0].value = "";
+    $( ".btn-secondary" ).click(function( event ) {
+        sendAjaxCall("download", $(" #terminalinput ")[0].value);
     });
 
     $( "#terminalinput")[0].addEventListener('keypress', function(e){

@@ -1,13 +1,3 @@
-Installer serveur ftp et configurer accès anonyme, plus autoriser l'upload de fichiers.
-(Dans /etc/vsftpd.conf, mettre anonymous_enable à YES et décommenter write_enable=YES)
+Accéder au site via l'IP plutôt que localhost
 
-Pour récupérer des fichiers on se place dans le dossier contenant les fichiers puis on lance un ftp connect vers notre serveur.
-Nécessité d'autoriser la connection à travers le pare-feu via l'uac (appuyer sur entrer)
-Ensuite "put" pour upload un fichier
-
-Pbs: permission denied pour l'upload
-Sur Windows: 
-500 Illegal PORT command.
-425 Use PORT or PASV first.
-
-chmod +w pour www-data sur . et assets (pour la créaion de fichiers)
+Interface pour le parcours de fichiers
