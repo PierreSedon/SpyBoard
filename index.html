@@ -12,6 +12,7 @@
 
     <!-- Bootstrap core CSS -->
 <link href="bootstrap_assets/bootstrap.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> -->
 
     <!-- Favicons -->
 <link rel="apple-touch-icon" href="https://getbootstrap.com/docs/4.4/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
@@ -39,13 +40,29 @@
           font-size: 3.5rem;
         }
       }
+
+      .mybadge {
+        /* display: inline-block; */
+        min-width: 10px;
+        padding: 3px 7px;
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        background-color: #777;
+        border-radius: 10px;
+        float: right;
+      }
     </style>
     <!-- Custom styles for this template -->
     <link href="bootstrap_assets/jumbotron.css" rel="stylesheet">
   </head>
   <body>
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-  <a class="navbar-brand" href="#">Navbar</a>
+  <a class="navbar-brand" href="#">Spyboard</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -68,17 +85,26 @@
   <div class="jumbotron">
     <div class="container">
       <h1 class="display-3">File Navigation</h1>
-      </div>
-      <ul id="fileList" class="list-group">
-      </ul> 
-      <a class="btn btn-secondary" href="#" role="button">Download</a>
-      
+    </div>
+    <ul class="nav nav-tabs">
+      <li class="spinner-border" role="status" id="spinner">
+        <span class="sr-only">Loading...</span>
+      </li>
+      <li class="active">
+        <a id="directory" style="color:#007bff;display: none;"></a>
+      </li>
+    </ul>
+    <br/>
+    <ul id="fileList" class="list-group overflow-auto" style="height: 70vh;">
+    </ul> 
+    <a class="btn btn-secondary" href="#" role="button">Download</a>
+    
   </div>
 
   <div class="container">
     <h1 class="display-3">Web Terminal</h1>
     <div class="container-xl bg-dark text-white" >
-      <p id="terminaltext" class="overflow-auto" style="white-space: pre-line; height: 600px"></p>
+      <p id="terminaltext" class="overflow-auto" style="white-space: pre-line; height: 70vh;"></p>
       <input id="terminalinput" type="text" class="form-control align-bottom bg-dark text-white">
     </div> 
   </div>

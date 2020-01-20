@@ -1,3 +1,5 @@
+var currentDirectory = "";
+
 
 function listClickHandler(event){
     var listItems = $(".list-group-item");
@@ -7,21 +9,36 @@ function listClickHandler(event){
 }
 
 function handleNewFilesList(data){
+    if (data.directory.localeCompare(".") == 0){
+        sendAjaxCall("list", null, false, true);
+        return;
+    }
     const list = document.getElementById("fileList");
     while (list.firstChild) {
         list.removeChild(list.firstChild);
     }
+    currentDirectory = data.directory;
+    $( "#spinner" )[0].style.display = "none";
+    var directoryText = $( "#directory" )[0];
+    directoryText.innerHTML = currentDirectory;
+    directoryText.style.display = "block";
+
+
     for (var i = 0; i < data.files.length; i++){
         var li = document.createElement("li");
         li.classList.add("list-group-item");
         var file = data.files[i];
-        if (file.mode.charAt(0).localeCompare("d") == 0){
-            li.classList.add("folder");
+        li.title = file.name;
+        if (file.mode.charAt(0).localeCompare("d") != 0){
+            li.innerHTML = '<p style="margin-bottom:0;font-size:larger">' + file.name + '</p>';
+            li.innerHTML += '<span class = "mybadge">' + file.size + ' B</span>';
+        } else {
+            li.innerHTML = '<p style="margin-bottom:0;font-size:larger;font-weight:bold">' + file.name + '</p>';
         }
         if (file.mode.charAt(3).localeCompare("h") == 0){
-            li.classList.add("hidden");
+            li.classList.add("list-group-item-warning");
         }
-        li.innerHTML = file.name;
+        li.innerHTML += '<p style="margin-bottom:0;font-size:smaller;">' + 'Last modified: ' + file.lastModifiedDay + ' ' + file.lastModifiedTime + '</p>';
         li.addEventListener("click", listClickHandler);
         list.appendChild(li);
     }
