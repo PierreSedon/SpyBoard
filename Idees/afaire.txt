@@ -1,3 +1,3 @@
 Accéder au site via l'IP plutôt que localhost
 
-Erreur avec le téléchargement de zip pour les dossiers, vérifier suppression et ajouter print
+Erreur avec le téléchargement de zip pour les dossiers, corriger suppression

@@ -7,14 +7,6 @@ var isFirstListClick = true;
 var successiveAjaxCalls = 0;
 
 function listClickHandler(event){
-    if (isFirstListClick){
-        isFirstListClick = false;
-        $( "#buttonDownload" ).removeClass("disabled");
-        $( "#buttonDownload" ).addClass("active");
-        $( "#buttonDelete" ).removeClass("disabled");
-        $( "#buttonDelete" ).addClass("active");
-    }
-
     var listItems = $(".list-group-item");
     listItems.removeClass("active");
     event.currentTarget.classList.add("active");
@@ -26,10 +18,19 @@ function listClickHandler(event){
     } else {
         handleFileClick();
     }
+
+    // On fait la modification après le traitement dossier/fichier car on y a besoin de l'information firstClick
+    if (isFirstListClick){
+        isFirstListClick = false;
+        $( "#buttonDownload" ).removeClass("disabled");
+        $( "#buttonDownload" ).addClass("active");
+        $( "#buttonDelete" ).removeClass("disabled");
+        $( "#buttonDelete" ).addClass("active");
+    }
 }
 
 function handleFolderClick(){
-    if (!isFolderSelected){
+    if (!isFolderSelected || isFirstListClick){
         isFolderSelected = true;
         $( "#buttonPrint" ).removeClass("active");
         $( "#buttonPrint" ).addClass("disabled");
@@ -39,7 +40,7 @@ function handleFolderClick(){
 }
 
 function handleFileClick(){
-    if (isFolderSelected){
+    if (isFolderSelected || isFirstListClick){
         isFolderSelected = false;
         $( "#buttonPrint" ).removeClass("disabled");
         $( "#buttonPrint" ).addClass("active");
@@ -93,7 +94,11 @@ function handleButtonDeleteClick(){
 }
 
 function handleButtonPrintClick(){
-
+    if (!isFolderSelected){
+        sendAjaxCall("print", currentDirectory + "/" + selectedItem, false, false);
+        // TODO: Utiliser la ligne suivante pour le rendu
+        // sendAjaxCall("print", currentDirectory + "\\" + selectedItem, false, false);
+    }
 }
 
 function handleButtonParentClick(){
@@ -156,7 +161,7 @@ function handleNewFilesList(data){
     }
 }
 
-function sendAjaxCall(action, command=null, printOutput=true, isJson=false) {
+function sendAjaxCall(action, command=null, terminalOutput=true, isJson=false) {
     var ajaxurl = 'assets/ajax.php';
     var data =  {
         'action': action,
@@ -216,15 +221,20 @@ function sendAjaxCall(action, command=null, printOutput=true, isJson=false) {
         // Code to run if the request succeeds (is done);
         // The response is passed to the function
         .done(function( response ) {
-            if (printOutput){
-                if (action.localeCompare("init") != 0){
+            if (terminalOutput){
+                if (action.localeCompare("init") == 0){
+                    sendAjaxCall("list", null, false, true);
+                } else {
                     $( "#terminaltext")[0].innerHTML += command;
                     $( "#terminaltext")[0].innerHTML += "\n";
-                } else {
-                    sendAjaxCall("list", null, false, true);
                 }
                 $( "#terminaltext")[0].innerHTML += response;
                 $('#terminaltext').scrollTop($('#terminaltext')[0].scrollHeight);
+            }
+            if (action.localeCompare("print") == 0){
+                $('#printModal').modal('show');
+                $('#modalTitle')[0].innerHTML = command;
+                $('#modalText')[0].innerHTML = response;
             }
             console.log(response);
         })

