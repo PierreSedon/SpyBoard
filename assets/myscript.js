@@ -1,28 +1,139 @@
-var currentDirectory = "";
+const MAX_AJAX_CALLS = 5;
 
+var currentDirectory = "";
+var selectedItem = null;
+var isFolderSelected = false;
+var isFirstListClick = true;
+var successiveAjaxCalls = 0;
 
 function listClickHandler(event){
+    if (isFirstListClick){
+        isFirstListClick = false;
+        $( "#buttonDownload" ).removeClass("disabled");
+        $( "#buttonDownload" ).addClass("active");
+        $( "#buttonDelete" ).removeClass("disabled");
+        $( "#buttonDelete" ).addClass("active");
+    }
+
     var listItems = $(".list-group-item");
     listItems.removeClass("active");
     event.currentTarget.classList.add("active");
-    console.log("test");
+
+    selectedItem = event.currentTarget.title;
+    
+    if (event.currentTarget.getAttribute('isFolder')){
+        handleFolderClick();
+    } else {
+        handleFileClick();
+    }
+}
+
+function handleFolderClick(){
+    if (!isFolderSelected){
+        isFolderSelected = true;
+        $( "#buttonPrint" ).removeClass("active");
+        $( "#buttonPrint" ).addClass("disabled");
+        $( "#buttonGo" ).removeClass("disabled");
+        $( "#buttonGo" ).addClass("active");
+    }
+}
+
+function handleFileClick(){
+    if (isFolderSelected){
+        isFolderSelected = false;
+        $( "#buttonPrint" ).removeClass("disabled");
+        $( "#buttonPrint" ).addClass("active");
+        $( "#buttonGo" ).removeClass("active");
+        $( "#buttonGo" ).addClass("disabled");
+    }
+}
+
+function resetVisualState(){
+    isFolderSelected = false;
+    selectedItem = null;
+    isFirstListClick = true;
+    $( "#buttonPrint" ).removeClass("active");
+    $( "#buttonPrint" ).addClass("disabled");
+    $( "#buttonGo" ).removeClass("active");
+    $( "#buttonGo" ).addClass("disabled");
+    $( "#buttonDownload" ).removeClass("active");
+    $( "#buttonDownload" ).addClass("disabled");
+    $( "#buttonDelete" ).removeClass("active");
+    $( "#buttonDelete" ).addClass("disabled");
+
+    $( ".list-group-item.active" ).removeClass("active");
+
+    $( "#directory" )[0].style.display = "none";
+    $( "#spinner" )[0].style.display = "block";
+}
+
+function handleButtonDownloadClick(){
+    if (isFolderSelected){
+        sendAjaxCall("downloadZip", currentDirectory + "/" + selectedItem);
+        // TODO: Utiliser la ligne suivante pour le rendu
+        // sendAjaxCall("downloadZip", currentDirectory + "\\" +selectedItem);
+    } else {
+        sendAjaxCall("download", currentDirectory + "/" + selectedItem);
+        // TODO: Utiliser la ligne suivante pour le rendu
+        // sendAjaxCall("download", currentDirectory + "\\" +selectedItem);
+    }
+}
+
+function handleButtonDeleteClick(){
+    if (isFolderSelected){
+        sendAjaxCall("deleteFolder", currentDirectory + "/" + selectedItem , false, true);
+        // TODO: Utiliser la ligne suivante pour le rendu
+        // sendAjaxCall("deleteFolder", currentDirectory + "\\" + selectedItem , false, true);
+    } else {
+        sendAjaxCall("delete", currentDirectory + "/" + selectedItem , false, true);
+        // TODO: Utiliser la ligne suivante pour le rendu
+        // sendAjaxCall("delete", currentDirectory + "\\" + selectedItem , false, true);
+    }
+    resetVisualState();
+}
+
+function handleButtonPrintClick(){
+
+}
+
+function handleButtonParentClick(){
+    sendAjaxCall("parent", null, false, true);
+    resetVisualState();
+}
+
+function handleButtonGoClick(){
+    if (isFolderSelected){
+        sendAjaxCall("go", currentDirectory + "/" + selectedItem , false, true);
+        // TODO: Utiliser la ligne suivante pour le rendu
+        // sendAjaxCall("go", currentDirectory + "\\" + selectedItem , false, true);
+        resetVisualState();
+    }
 }
 
 function handleNewFilesList(data){
-    if (data.directory.localeCompare(".") == 0){
+    if ((data.directory.localeCompare(".") == 0) && successiveAjaxCalls < MAX_AJAX_CALLS){
         sendAjaxCall("list", null, false, true);
+        successiveAjaxCalls++;
         return;
     }
+    if (successiveAjaxCalls == MAX_AJAX_CALLS){
+        successiveAjaxCalls = 0;
+        handleButtonParentClick();
+        return;
+    }
+    successiveAjaxCalls = 0;
     const list = document.getElementById("fileList");
     while (list.firstChild) {
         list.removeChild(list.firstChild);
     }
-    currentDirectory = data.directory;
+    
     $( "#spinner" )[0].style.display = "none";
+
+    currentDirectory = data.directory;
+
     var directoryText = $( "#directory" )[0];
     directoryText.innerHTML = currentDirectory;
     directoryText.style.display = "block";
-
 
     for (var i = 0; i < data.files.length; i++){
         var li = document.createElement("li");
@@ -33,6 +144,7 @@ function handleNewFilesList(data){
             li.innerHTML = '<p style="margin-bottom:0;font-size:larger">' + file.name + '</p>';
             li.innerHTML += '<span class = "mybadge">' + file.size + ' B</span>';
         } else {
+            li.setAttribute('isFolder', true);
             li.innerHTML = '<p style="margin-bottom:0;font-size:larger;font-weight:bold">' + file.name + '</p>';
         }
         if (file.mode.charAt(3).localeCompare("h") == 0){
@@ -150,9 +262,9 @@ $( document ).ready(function() {
     //     console.log("test");
     // });
     
-    $( ".btn-secondary" ).click(function( event ) {
-        sendAjaxCall("download", $(" #terminalinput ")[0].value);
-    });
+    // $( ".btn-secondary" ).click(function( event ) {
+    //     sendAjaxCall("download", $(" #terminalinput ")[0].value);
+    // });
 
     $( "#terminalinput")[0].addEventListener('keydown', function(e){
         if (e.code == "Enter"){

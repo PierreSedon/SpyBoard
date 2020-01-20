@@ -97,7 +97,12 @@
     <br/>
     <ul id="fileList" class="list-group overflow-auto" style="height: 70vh;">
     </ul> 
-    <a class="btn btn-secondary" href="#" role="button">Download</a>
+    <a class="btn btn-secondary disabled" href="#" id="buttonDownload" role="button" onclick="handleButtonDownloadClick()">Download</a>
+    <a class="btn btn-secondary disabled" href="#" id="buttonDelete" role="button" onclick="handleButtonDeleteClick()">Delete</a>
+    <a class="btn btn-secondary disabled" href="#" id="buttonPrint" role="button" onclick="handleButtonDeleteClick()"></a>
+    <a class="btn btn-secondary active" href="#" id="buttonParent" role="button" onclick="handleButtonParentClick()">Parent Folder</a>
+    <a class="btn btn-secondary disabled" href="#" id="buttonGo" role="button" onclick="handleButtonGoClick()">Go to</a>
+    
     
   </div>
 
