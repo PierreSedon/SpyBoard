@@ -29,6 +29,26 @@ function listClickHandler(event){
     }
 }
 
+function handleGoFilesClick(){
+    if (!$("#goFiles").hasClass("active")){
+        $("#goTerminal").removeClass("active");
+        $("#goFiles").addClass("active");
+
+        $( "#terminalLayout" )[0].style.display = "none";
+        $( "#filesLayout" )[0].style.display = "block";
+    }
+}
+
+function handleGoTerminalClick(){
+    if (!$("#goTerminal").hasClass("active")){
+        $("#goFiles").removeClass("active");
+        $("#goTerminal").addClass("active");
+
+        $( "#filesLayout" )[0].style.display = "none";
+        $( "#terminalLayout" )[0].style.display = "block";
+    }
+}
+
 function handleFolderClick(){
     if (!isFolderSelected || isFirstListClick){
         isFolderSelected = true;
@@ -69,6 +89,7 @@ function resetVisualState(){
 }
 
 function handleButtonDownloadClick(){
+    event.preventDefault();
     if (isFolderSelected){
         sendAjaxCall("downloadZip", currentDirectory + "/" + selectedItem);
         // TODO: Utiliser la ligne suivante pour le rendu
@@ -82,6 +103,7 @@ function handleButtonDownloadClick(){
 }
 
 function handleButtonDeleteClick(){
+    event.preventDefault();
     if (isFolderSelected){
         sendAjaxCall("deleteFolder", currentDirectory + "/" + selectedItem , false, true);
         // TODO: Utiliser la ligne suivante pour le rendu
@@ -95,6 +117,7 @@ function handleButtonDeleteClick(){
 }
 
 function handleButtonPrintClick(){
+    event.preventDefault();
     if (!isFolderSelected){
         sendAjaxCall("print", currentDirectory + "/" + selectedItem, false, false);
         // TODO: Utiliser la ligne suivante pour le rendu
@@ -102,12 +125,14 @@ function handleButtonPrintClick(){
     }
 }
 
-function handleButtonParentClick(){
+function handleButtonParentClick(event){
+    event.preventDefault();
     sendAjaxCall("parent", null, false, true);
     resetVisualState();
 }
 
 function handleButtonGoClick(){
+    event.preventDefault();
     if (isFolderSelected){
         sendAjaxCall("go", currentDirectory + "/" + selectedItem , false, true);
         // TODO: Utiliser la ligne suivante pour le rendu

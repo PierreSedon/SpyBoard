@@ -1,146 +1,144 @@
 <!DOCTYPE html>
 <html lang="en"><head>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
-    <meta name="generator" content="Jekyll v3.8.6">
-    <title>Jumbotron Template · Bootstrap</title>
-
-    <link rel="canonical" href="https://getbootstrap.com/docs/4.4/examples/jumbotron/">
-
-    <!-- Bootstrap core CSS -->
-<link href="bootstrap_assets/bootstrap.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> -->
-
-    <!-- Favicons -->
-<link rel="apple-touch-icon" href="https://getbootstrap.com/docs/4.4/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
-<link rel="icon" href="https://getbootstrap.com/docs/4.4/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
-<link rel="icon" href="https://getbootstrap.com/docs/4.4/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
-<link rel="manifest" href="https://getbootstrap.com/docs/4.4/assets/img/favicons/manifest.json">
-<link rel="mask-icon" href="https://getbootstrap.com/docs/4.4/assets/img/favicons/safari-pinned-tab.svg" color="#563d7c">
-<link rel="icon" href="https://getbootstrap.com/docs/4.4/assets/img/favicons/favicon.ico">
-<meta name="msapplication-config" content="/docs/4.4/assets/img/favicons/browserconfig.xml">
-<meta name="theme-color" content="#563d7c">
-
-
-    <style>
-      .bd-placeholder-img {
-        font-size: 1.125rem;
-        text-anchor: middle;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-      }
-
-      @media (min-width: 768px) {
-        .bd-placeholder-img-lg {
-          font-size: 3.5rem;
-        }
-      }
-
-      .mybadge {
-        /* display: inline-block; */
-        min-width: 10px;
-        padding: 3px 7px;
-        font-size: 12px;
-        font-weight: 700;
-        line-height: 1;
-        color: #fff;
-        text-align: center;
-        white-space: nowrap;
-        vertical-align: middle;
-        background-color: #777;
-        border-radius: 10px;
-        float: right;
-      }
-    </style>
-    <!-- Custom styles for this template -->
-    <link href="bootstrap_assets/jumbotron.css" rel="stylesheet">
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-  <a class="navbar-brand" href="#">Spyboard</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Link</a>
-      </li>
-    </ul>
-  </div>
-</nav>
-
-<main role="main">
-
-  <!-- Main jumbotron for a primary marketing message or call to action -->
-  <div class="jumbotron">
-    <div class="container">
-      <h1 class="display-3">File Navigation</h1>
-    </div>
-    <ul class="nav nav-tabs">
-      <li class="spinner-border" role="status" id="spinner">
-        <span class="sr-only">Loading...</span>
-      </li>
-      <li class="active">
-        <a id="directory" style="color:#007bff;display: none;"></a>
-      </li>
-    </ul>
-    <br/>
-    <ul id="fileList" class="list-group overflow-auto" style="height: 70vh;">
-    </ul> 
-    <a class="btn btn-secondary disabled" href="#" id="buttonDownload" role="button" onclick="handleButtonDownloadClick()">Download</a>
-    <a class="btn btn-secondary disabled" href="#" id="buttonDelete" role="button" onclick="handleButtonDeleteClick()">Delete</a>
-    <a class="btn btn-secondary disabled" href="#" id="buttonPrint" role="button" onclick="handleButtonPrintClick()">Print File</a>
-    <a class="btn btn-secondary active" href="#" id="buttonParent" role="button" onclick="handleButtonParentClick()">Parent Folder</a>
-    <a class="btn btn-secondary disabled" href="#" id="buttonGo" role="button" onclick="handleButtonGoClick()">Go to</a>
-  </div>
-
-<!-- Modal -->
-<div class="modal fade" id="printModal" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 90vw;">
-    <div class="modal-content" style="display: table;">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalTitle"></h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body" id="modalText" style="white-space: pre-line;">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-  <div class="container">
-    <h1 class="display-3">Web Terminal</h1>
-    <div class="container-xl bg-dark text-white" >
-      <p id="terminaltext" class="overflow-auto" style="white-space: pre-line; height: 70vh;"></p>
-      <input id="terminalinput" type="text" class="form-control align-bottom bg-dark text-white">
-    </div> 
-  </div>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+  <meta name="generator" content="Jekyll v3.8.6">
+  <title>Spyboard</title>
   
+  <link rel="canonical" href="https://getbootstrap.com/docs/4.4/examples/jumbotron/">
+  
+  <!-- Bootstrap core CSS -->
+  <link href="bootstrap_assets/bootstrap.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  
+  <!-- Favicons -->
+  <link rel="icon" href="assets/img/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16x16.png">
+  <link rel="manifest" href="assets/img/site.webmanifest">
+  <!-- <meta name="msapplication-config" content="/docs/4.4/assets/img/favicons/browserconfig.xml"> -->
+  <meta name="theme-color" content="#563d7c">
+  
+  
+  <style>
+    .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    
+    @media (min-width: 768px) {
+      .bd-placeholder-img-lg {
+        font-size: 3.5rem;
+      }
+    }
+    
+    .mybadge {
+      /* display: inline-block; */
+      min-width: 10px;
+      padding: 3px 7px;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1;
+      color: #fff;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: middle;
+      background-color: #777;
+      border-radius: 10px;
+      float: right;
+    }
+  </style>
+  <!-- Custom styles for this template -->
+  <link href="bootstrap_assets/jumbotron.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="#">Spyboard</a>
+    
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link active" href="#" id="goFiles" onclick="handleGoFilesClick()">File Navigation</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" id="goTerminal" onclick="handleGoTerminalClick()">Web Terminal</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  
+  <main role="main">
+    
+    <!-- File viewer -->
+    <div id="filesLayout" class="jumbotron">
+      <div class="container">
+        <h1 class="display-3">File Navigation</h1>
+      </div>
+      <ul class="nav nav-tabs">
+        <li class="spinner-border" role="status" id="spinner">
+          <span class="sr-only">Loading...</span>
+        </li>
+        <li class="active">
+          <a id="directory" style="color:#007bff;display: none;"></a>
+        </li>
+      </ul>
+      <br/>
+      <ul id="fileList" class="list-group overflow-auto" style="height: 70vh;">
+      </ul> 
+      <a class="btn btn-secondary disabled" href="#" id="buttonDownload" role="button" onclick="handleButtonDownloadClick(event)">Download</a>
+      <a class="btn btn-secondary disabled" href="#" id="buttonDelete" role="button" onclick="handleButtonDeleteClick(event)">Delete</a>
+      <a class="btn btn-secondary disabled" href="#" id="buttonPrint" role="button" onclick="handleButtonPrintClick(event)">Print File</a>
+      <a class="btn btn-secondary active" href="#" id="buttonParent" role="button" onclick="handleButtonParentClick(event)">Parent Folder</a>
+      <a class="btn btn-secondary disabled" href="#" id="buttonGo" role="button" onclick="handleButtonGoClick(event)">Go to</a>
+    </div>
+    
+    <!-- Terminal -->
+    <div id="terminalLayout" class="jumbotron" style="display: none;">
+      <div  class="container">
+        <div class="container">
+          <h1 class="display-3">Web Terminal</h1>
+        </div>
+        <div class="container-xl bg-dark text-white" >
+          <p id="terminaltext" class="overflow-auto" style="white-space: pre-line; height: 70vh;"></p>
+          <input id="terminalinput" type="text" class="form-control align-bottom bg-dark text-white">
+        </div> 
+      </div>
+    </div>
 
-</main>
-
-<footer class="container">
-  <p>© RSR 2019-2020</p>
-</footer>
-<!-- <script src="bootstrap_assets/jquery-3.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script> -->
-<script src="bootstrap_assets/jquery-3.4.1.min.js" integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh" crossorigin="anonymous"></script>
-<!-- Custom scripts  -->
-<script src="assets/myscript.js"></script>
-<script src="bootstrap_assets/bootstrap.js" integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm" crossorigin="anonymous"></script>
-
+    <!-- Modal -->
+    <div class="modal fade" id="printModal" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 90vw;">
+        <div class="modal-content" style="display: table;">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalTitle"></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" id="modalText" style="white-space: pre-line;">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </main>
+  
+  <footer class="container">
+    <p>© RSR 2019-2020</p>
+  </footer>
+  <script src="bootstrap_assets/jquery-3.4.1.min.js" integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh" crossorigin="anonymous"></script>
+  <!-- Custom scripts  -->
+  <script src="assets/myscript.js"></script>
+  <script src="bootstrap_assets/bootstrap.js" integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm" crossorigin="anonymous"></script>
+  
 </body></html>
