@@ -91,26 +91,17 @@ function resetVisualState(){
 function handleButtonDownloadClick(){
     event.preventDefault();
     if (isFolderSelected){
-        // sendAjaxCall("downloadZip", currentDirectory + "/" + selectedItem);
-        // TODO: Utiliser la ligne suivante pour le rendu
         sendAjaxCall("downloadZip", currentDirectory + "\\" +selectedItem);
     } else {
-        // sendAjaxCall("download", currentDirectory + "/" + selectedItem);
-        // TODO: Utiliser la ligne suivante pour le rendu
         sendAjaxCall("download", currentDirectory + "\\" +selectedItem);
-        console.log(currentDirectory + "\\" +selectedItem);
     }
 }
 
 function handleButtonDeleteClick(){
     event.preventDefault();
     if (isFolderSelected){
-        // sendAjaxCall("deleteFolder", currentDirectory + "/" + selectedItem , false, true);
-        // TODO: Utiliser la ligne suivante pour le rendu
         sendAjaxCall("deleteFolder", currentDirectory + "\\" + selectedItem , false, true);
     } else {
-        // sendAjaxCall("delete", currentDirectory + "/" + selectedItem , false, true);
-        // TODO: Utiliser la ligne suivante pour le rendu
         sendAjaxCall("delete", currentDirectory + "\\" + selectedItem , false, true);
     }
     resetVisualState();
@@ -119,8 +110,6 @@ function handleButtonDeleteClick(){
 function handleButtonPrintClick(){
     event.preventDefault();
     if (!isFolderSelected){
-        // sendAjaxCall("print", currentDirectory + "/" + selectedItem, false, false);
-        // TODO: Utiliser la ligne suivante pour le rendu
         sendAjaxCall("print", currentDirectory + "\\" + selectedItem, false, false);
     }
 }
@@ -136,8 +125,6 @@ function handleButtonParentClick(event){
 function handleButtonGoClick(){
     event.preventDefault();
     if (isFolderSelected){
-        // sendAjaxCall("go", currentDirectory + "/" + selectedItem , false, true);
-        // TODO: Utiliser la ligne suivante pour le rendu
         sendAjaxCall("go", currentDirectory + "\\" + selectedItem , false, true);
         resetVisualState();
     }
@@ -242,9 +229,7 @@ function sendAjaxCall(action, command=null, terminalOutput=true, isJson=false) {
             
             // Whether this is a POST or GET request
             type: "POST",
-            
-            // The type of data we expect back
-            // dataType : "json",
+
         })
         // Code to run if the request succeeds (is done);
         // The response is passed to the function
@@ -286,23 +271,6 @@ $( document ).ready(function() {
     var currentCommandNumber = 0;
 
     sendAjaxCall("init", null, true, false);
-    // sendAjaxCall("write", "Get-ChildItem -Force");
-    // document.addEventListener('outputRead', function(event){
-    //     $( "#terminaltext" )[0].textContent = event.detail;
-    // });
-    // readTextFile("http://localhost/bootstrap/reverseoutput");
-    
-    // Change the active member of the list when it is clicked
-    // $( ".list-group-item" ).click(function( event ) {
-    //     var listItems = $(".list-group-item");
-    //     listItems.removeClass("active");
-    //     event.currentTarget.classList.add("active");
-    //     console.log("test");
-    // });
-    
-    // $( ".btn-secondary" ).click(function( event ) {
-    //     sendAjaxCall("download", $(" #terminalinput ")[0].value);
-    // });
 
     $( "#terminalinput")[0].addEventListener('keydown', function(e){
         if (e.code == "Enter"){
@@ -324,8 +292,6 @@ $( document ).ready(function() {
                 currentCommandNumber++;
                 $(" #terminalinput ")[0].value = "";
             }
-        } else {
-            // $( "#terminaltext")[0].innerHTML += e.key;
         }
     });
     
